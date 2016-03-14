@@ -67,3 +67,10 @@ void PathPlanner::run() {
 	accOut.getSignal().setValue(x[2]);
 	accOut.getSignal().setTimestamp(t);
 }
+
+void PathPlanner::setMaxSpeed(AxisVector vel) {
+	trajectoryGen.setMaxSpeed(vel);
+}
+void PathPlanner::setMaxAcc(AxisVector acc) {
+	trajectoryGen.setMaxAcc(acc);
+}

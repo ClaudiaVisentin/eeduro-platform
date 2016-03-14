@@ -20,6 +20,7 @@ namespace eeduro {
 			virtual void move(int position);
 			virtual void waitUntilPointReached();
 			virtual void sortBlocks(std::array<int,4> blocks);
+			virtual void unsortBlocks();
 			virtual int find(const std::array<int,4> &blocks, int block);
 			
 			MoveBlockSequence moveBlock;

@@ -31,14 +31,14 @@ int main(int argc, char* argv[])
 	board.setEnable(true);
 	
 	while (running) {
-		voltage[3] = 3;
+		voltage[0] = 4;
 		voltageOutput.getSignal().setValue(voltage);
 		board.run();
-		sleep(1);
-		voltage[3] = -3;
+		sleep(2);
+		voltage[0] = -4;
 		voltageOutput.getSignal().setValue(voltage);
 		board.run();
-		sleep(1);
+		sleep(2);
 	}
 	
 	voltage.zero();

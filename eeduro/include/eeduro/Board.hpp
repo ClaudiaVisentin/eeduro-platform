@@ -62,6 +62,7 @@ namespace eeduro {
 		double voltage_limit = 12;
 		const double max_voltage = 12;
 		const int encoder_ticks[4] = { 4096 * 4, 4096 * 4, 4096 * 4, 256 * 4 };
+// 		const int encoder_ticks[4] = { 512 * 4, 512 * 4, 512 * 4, 256 * 4 }; // first prototype
 		static constexpr double pi = 3.1415926535897932384626433832795;
 		const double k[4] = {	2 * pi / ( static_cast<double>(encoder_ticks[0]) ),
 								2 * pi / ( static_cast<double>(encoder_ticks[1]) ),

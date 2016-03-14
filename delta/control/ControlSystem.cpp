@@ -41,9 +41,19 @@ ControlSystem::ControlSystem() :
 	
 	board.getIn().connect(voltageSwitch.getOut());
 	
+// 	// Version 1
+// 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
+// 	inputSwitch.getIn(1).connect(mouse.getOut());     
+// 	inputSwitch.getIn(2).connect(joystick.getOut());
+	
+	// Version 2
 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
- 	inputSwitch.getIn(1).connect(mouse.getOut());
-	inputSwitch.getIn(2).connect(joystick.getOut());
+	derMouse.getIn().connect(mouse.getOut());
+	derJoystick.getIn().connect(joystick.getOut());
+	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
+	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
+	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
+	
 	posSum.getIn(0).connect(inputSwitch.getOut());
 	posSum.getIn(1).connect(directKin.getOut());
 	posController.getIn().connect(posSum.getOut());
@@ -72,7 +82,10 @@ ControlSystem::ControlSystem() :
 	directKin.getIn().connect(angleGear.getOut());
 	
 	timedomain.addBlock(&joystick);
- 	timedomain.addBlock(&mouse);
+	timedomain.addBlock(&mouse);
+	timedomain.addBlock(&derJoystick);
+	timedomain.addBlock(&derMouse);
+	timedomain.addBlock(&vel2posInputs); 
 	timedomain.addBlock(&pathPlanner);
 	timedomain.addBlock(&inputSwitch);
 	timedomain.addBlock(&board);
@@ -93,6 +106,7 @@ ControlSystem::ControlSystem() :
 	timedomain.addBlock(&motorModel);
 	timedomain.addBlock(&voltageSetPoint);
 	timedomain.addBlock(&voltageSwitch);
+	
 }
 
 void ControlSystem::start() {

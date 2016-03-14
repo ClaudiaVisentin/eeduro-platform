@@ -22,7 +22,7 @@ namespace eeduro {
 		// Controller parameters
 		constexpr double dt = 0.001; // [s]
 		constexpr double D = 0.7;
-		constexpr double w0 = 2 * pi * 30; // = 2 * pi * 1 / (2 * D * dt * pi);
+		constexpr double w0 = 2 * pi * 25; // = 2 * pi * 1 / (2 * D * dt * pi);  // STD: 2 * pi * 30 @1ms
 		constexpr double kp = w0 / (2 * D);
 		constexpr double kd = 2 * D * w0;
 		
@@ -31,8 +31,8 @@ namespace eeduro {
 		
 		constexpr double q012SafeMin = -1.74 * i1524;
 		constexpr double q012SafeMax = 0.4 * i1524;
-		constexpr double q3SafeMin = -2.958 * i0816;
-		constexpr double q3SafeMax = 2.958 * i0816;
+		constexpr double q3SafeMin = -2.958 *10* i0816;
+		constexpr double q3SafeMax = 2.958 *10* i0816;
 		
 		constexpr double tcpReady_x = 0;
 		constexpr double tcpReady_y = 0;

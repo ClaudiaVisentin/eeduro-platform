@@ -1,6 +1,7 @@
 #include "DetectSequence.hpp"
 #include "../control/constants.hpp"
 #include <unistd.h>
+#include <iostream>
 
 using namespace eeduro::delta;
 using namespace eeros::sequencer;
@@ -17,11 +18,11 @@ DetectSequence::DetectSequence(Sequencer* sequencer, ControlSystem* controlSys) 
 }
 
 int DetectSequence::run(int position) {
-	double down = calibration.position[position].level12 + 0.002;
+	double down = calibration.position[position].level12; // + 0.001;  // + 0.002;
 	double touch = calibration.position[position].level30 - 0.0002;
 	
 	eeros::math::Vector<4> torqueLimit{ q012gearTorqueLimit, q012gearTorqueLimit, q012gearTorqueLimit, q3gearTorqueLimit };
-	eeros::math::Vector<4> torqueLimitDown = torqueLimit * 0.1;
+	eeros::math::Vector<4> torqueLimitDown = torqueLimit * 0.2; // * 0.1;
 	eeros::math::Vector<4> zero = torqueLimit * 0.01;
 	
 	auto p = controlSys->pathPlanner.getLastPoint();
@@ -31,7 +32,7 @@ int DetectSequence::run(int position) {
 	waitUntilPointReached();
 	
 	controlSys->torqueLimitation.setLimit(-torqueLimitDown, torqueLimitDown);
-	
+			
 	p[2] = touch;
 	controlSys->pathPlanner.gotoPoint(p);
 	waitUntilPointReached();
@@ -39,6 +40,7 @@ int DetectSequence::run(int position) {
 	controlSys->torqueLimitation.setLimit(-zero, zero);
 	usleep(500000);
 	double z = controlSys->directKin.getOut().getSignal().getValue()[2];
+		
 	controlSys->torqueLimitation.setLimit(-torqueLimitDown, torqueLimitDown);
 	
 	p[2] = down;

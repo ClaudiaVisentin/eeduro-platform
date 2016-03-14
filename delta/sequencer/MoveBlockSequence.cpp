@@ -49,12 +49,14 @@ void MoveBlockSequence::up() {
 void MoveBlockSequence::down() {
 	log.trace() << "move down";
 	
+// 	double down = calibration.position[position].zblock[1] + 0.001;
+// 	double touch = calibration.position[position].zblock[3];
 	double down = calibration.position[position].zblock[1] + 0.001;
-	double touch = calibration.position[position].zblock[3];
+	double touch = calibration.position[position].zblock[3] - 0.001;
 	
 	eeros::math::Vector<4> torqueLimit{ q012gearTorqueLimit, q012gearTorqueLimit, q012gearTorqueLimit, q3gearTorqueLimit };
-	eeros::math::Vector<4> torqueLimitDown = torqueLimit * 0.1;
-	
+// 	eeros::math::Vector<4> torqueLimitDown = torqueLimit * 0.1;
+	eeros::math::Vector<4> torqueLimitDown = torqueLimit * 0.4;
 	
 	auto p = controlSys->pathPlanner.getLastPoint();
 	
@@ -72,11 +74,13 @@ void MoveBlockSequence::down() {
 void MoveBlockSequence::grab() {
 	log.trace() << "grab block";
 	controlSys->board.power_out[0] = true;
+	controlSys->board.power_out[1] = true;
 }
 
 void MoveBlockSequence::release() {
 	log.trace() << "release block";
 	controlSys->board.power_out[0] = false;
+	controlSys->board.power_out[1] = false;
 }
 
 void MoveBlockSequence::move(int position) {

@@ -44,7 +44,7 @@ void MainSequence::run() {
 		} else if (index == 2) {
 			log.trace() << "Press the blue button switch to predifined path";
 		}
-		
+
 		usleep(200000);
 		controlSys->board.button_latch[0].reset();
 		while(controlSys->board.button_latch[0].get() != true) {
@@ -54,6 +54,9 @@ void MainSequence::run() {
 		
 		index++;
 		if (index > 2) index = 0;
+// 		index++;
+// 		if(index > 1) index = 0;
+		
 		if (index == 0) {
 			log.trace() << "switching to predifined path";
 			
@@ -64,7 +67,6 @@ void MainSequence::run() {
 				usleep(100000);
 				yield();
 			}
-			
 			sort();
 		}
 		if (index == 1) {
@@ -76,9 +78,9 @@ void MainSequence::run() {
 				usleep(100000);
 				yield();
 			}
-			controlSys->mouse.setInitPos(start_position);
+// 			controlSys->mouse.setInitPos(start_position);
 			controlSys->inputSwitch.switchToInput(1);
-		}
+			}
 		if (index == 2) {
 			log.trace() << "switching to joystick input";
 			controlSys->pathPlanner.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue());
@@ -88,7 +90,7 @@ void MainSequence::run() {
 				usleep(100000);
 				yield();
 			}
-			controlSys->joystick.setInitPos(start_position);
+// 			controlSys->joystick.setInitPos(start_position);
 			controlSys->inputSwitch.switchToInput(2);
 		}
 	}

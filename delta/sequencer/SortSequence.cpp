@@ -1,6 +1,7 @@
 #include "SortSequence.hpp"
 #include "../safety/DeltaSafetyProperties.hpp"
 #include <unistd.h>
+#include <iostream>
 
 using namespace eeduro::delta;
 using namespace eeros::sequencer;
@@ -58,9 +59,26 @@ void SortSequence::run() {
 	}
 	if (!all_ok) return;
 	
-	sortBlocks(blocks);
+	// define if you want to sort or unsort
+	int wrong_block = (-1);
+	int wrong_position = (-1);
+	for (int i = 0; i < blocks.size(); i++) {
+		wrong_position = find(blocks, i);
+		if (wrong_position < 0) {
+			log.error() << "cannot find block " << i;
+			return;
+		}
+		if (wrong_position != i) {
+			wrong_block = i;
+			break;
+		}
+	}
+	
+	if (wrong_block < 0)
+		unsortBlocks();
+	else
+		sortBlocks(blocks);
 }
-
 
 void SortSequence::sortBlocks(std::array<int,4> blocks) {
 	while (true) {
@@ -99,7 +117,6 @@ void SortSequence::sortBlocks(std::array<int,4> blocks) {
 				log.error() << "cannot find block 0";
 				return;
 			}
-			
 			log.info() << "move block from position " << correct_position << " to " << empty_position;
 			moveBlock(correct_position, empty_position);
 			std::swap(blocks[correct_position], blocks[empty_position]);
@@ -110,6 +127,23 @@ void SortSequence::sortBlocks(std::array<int,4> blocks) {
 		}
 	}
 	log.info() << "finished sorting";
+}
+
+void SortSequence::unsortBlocks() {
+	int randIndex = rand() % 3;
+	if(randIndex == 0) {
+		moveBlock(3, 0);
+		moveBlock(1, 3);
+		moveBlock(2, 1);
+	} else if (randIndex == 1) {
+		moveBlock(1, 0);
+		moveBlock(2, 1);
+		moveBlock(3, 2);
+	} else {
+		moveBlock(2, 0);
+		moveBlock(1, 2);
+		moveBlock(3, 1);
+	}
 }
 
 int SortSequence::find(const std::array<int,4> &blocks, int block) {
@@ -123,8 +157,30 @@ int SortSequence::find(const std::array<int,4> &blocks, int block) {
 
 void SortSequence::move(int position) {
 	auto p = controlSys->pathPlanner.getLastPoint();
-	p[0] = calibration.position[position].x;
-	p[1] = calibration.position[position].y;
+// 	p[0] = calibration.position[position].x;
+// 	p[1] = calibration.position[position].y;
+	
+	if(position == 0) {
+		p[0] = calibration.position[position].x + 0.001;   
+		p[1] = calibration.position[position].y ;          
+	}                                                      
+	else if(position == 1) {                               
+		p[0] = calibration.position[position].x;           
+		p[1] = calibration.position[position].y;           
+	}                                                      
+	else if(position == 2) {                               
+		p[0] = calibration.position[position].x + 0.0015;  
+		p[1] = calibration.position[position].y - 0.0015;  
+	}                                                      
+	else if(position == 3) {                               
+		p[0] = calibration.position[position].x + 0.0015;  
+		p[1] = calibration.position[position].y + 0.0015;  
+	}                                                      
+	else {                                                 
+		p[0] = calibration.position[position].x + 0.0015; // FH: + 0.0015  
+		p[1] = calibration.position[position].y + 0.0015; // FH: + 0.0015
+	}
+	 
 	controlSys->pathPlanner.gotoPoint(p);
 	waitUntilPointReached();
 }

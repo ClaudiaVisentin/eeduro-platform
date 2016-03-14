@@ -20,6 +20,7 @@
 #include "Inertia.hpp"
 #include "MotorModel.hpp"
 #include "PathPlanner.hpp"
+#include "Velocity2Position.hpp"
 #include "constants.hpp"
 #include "types.hpp"
 
@@ -53,28 +54,30 @@ namespace eeduro {
 			Jacobian jacobian;
 			bool homed;
 			
-			// Blocks			
+			// Blocks
 			eeduro::Board										board;
 			
+			// Version 1 with single inputs (one for joystick, one for mouse)
 			eeros::control::XBoxInput							joystick;
 			eeros::control::MouseInput							mouse;
+
+			// Version 2 with both inputs together
+			eeros::control::D<AxisVector>						derMouse;
+			eeros::control::D<AxisVector>						derJoystick;
+			eeduro::Velocity2Position							vel2posInputs;
 			
 			eeduro::delta::PathPlanner							pathPlanner;
 			eeros::control::Switch<3, AxisVector>				inputSwitch;
-			
 			eeros::control::Sum<2, AxisVector>					posSum;
 			eeros::control::Gain<AxisVector>					posController;
 			eeros::control::D<AxisVector>						posDiff;
-			
 			eeros::control::Sum<3, AxisVector>					speedSum;
 			eeros::control::Saturation<AxisVector>				speedLimitation;
 			eeros::control::Gain<AxisVector>					speedController;
 			eeros::control::Sum<2, AxisVector>					accSum;
-			
 			eeduro::delta::Inertia								inertia;
 			eeros::control::Saturation<AxisVector>				forceLimitation;
 			eeduro::delta::Jacobi								jacobi;
-			
 			eeros::control::Saturation<AxisVector>				torqueLimitation;
 			eeros::control::Gain<AxisVector, AxisVector, true>	torqueGear;
 			eeros::control::Gain<AxisVector, AxisVector, true>	angleGear;

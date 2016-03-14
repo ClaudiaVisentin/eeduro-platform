@@ -194,6 +194,7 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	
 	level(homeing).setLevelAction([&](SafetyContext* privateContext) {
 		static unsigned int count = 0;
+		
 		if(count == 1) {
 			controlSys->setVoltageForInitializing({q012InitVoltage, q012InitVoltage, q012InitVoltage, q3InitVoltage});
 		}
@@ -218,6 +219,7 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 			if(count > static_cast<unsigned int>(0.3 / dt)) {
 				controlSys->setVoltageForInitializing({0, 0, 0, 0});
 				controlSys->mouse.reset(0, 0, 0, 0);
+				// TODO reset output
 				controlSys->voltageSwitch.switchToInput(0);
 				count = 0;
 				first = false;
@@ -226,6 +228,11 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 			}
 		}
 	});
+	
+// 	level(systemReady).setLevelAction([&](SafetyContext* privateContext) {
+// 		std::cout << "limit: " << controlSys->mouse.getOut().getSignal().getValue() << std::endl;
+// 		std::cout << "output: " << controlSys->joystick.getOut().getSignal().getValue() << std::endl;
+// 	});
 	
 	// Define entry level
 	entryLevel = off;

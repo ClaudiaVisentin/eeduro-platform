@@ -95,7 +95,6 @@ void CalibrateSequence::run() {
 			log.error() << "[position " << i << "] invalid calibration zblock2 >= zblock1";
 			good = false;
 		}
-		
 		if (z1 <= calibration.position[i].level12) {
 			log.error() << "[position " << i << "] invalid calibration zblock1 <= level12";
 			good = false;
@@ -104,7 +103,6 @@ void CalibrateSequence::run() {
 			log.error() << "[position " << i << "] invalid calibration zblock2 >= level12";
 			good = false;
 		}
-		
 		if (z2 <= calibration.position[i].level23) {
 			log.error() << "[position " << i << "] invalid calibration zblock2 <= level23";
 			good = false;
@@ -113,7 +111,6 @@ void CalibrateSequence::run() {
 			log.error() << "[position " << i << "] invalid calibration zblock3 >= level23";
 			good = false;
 		}
-		
 		if (z3 <= calibration.position[i].level30) {
 			log.error() << "[position " << i << "] invalid calibration zblock3 <= level30";
 			good = false;
@@ -124,7 +121,9 @@ void CalibrateSequence::run() {
 		}
 	}
 	
-	if (!good) return;
+	if (!good) {
+		return;
+	}
 	if (calibration.save()) {
 		log.info() << "calibration saved";
 	}

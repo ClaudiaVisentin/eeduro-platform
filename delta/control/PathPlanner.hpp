@@ -27,6 +27,9 @@ namespace eeduro {
 			virtual void setInitPos(AxisVector initPos);
 			virtual AxisVector getLastPoint();
 			
+			virtual void setMaxSpeed(AxisVector vel);
+			virtual void setMaxAcc(AxisVector acc);
+			
 			virtual void run();
 			
 		protected:

@@ -2,6 +2,7 @@
 #include "safety/DeltaSafetyProperties.hpp"
 #include "sequencer/MoveBlockSequence.hpp"
 #include "sequencer/MainSequence.hpp"
+#include "sequencer/MainSequenceFaulhaber.hpp"
 #include "sequencer/CalibrateSequence.hpp"
 
 #include <eeros/hal/HAL.hpp>
@@ -33,9 +34,9 @@ int main(int argc, char* argv[]) {
 	signal(SIGINT, signalHandler);
 	
 	StreamLogWriter w(std::cout);
-	SysLogWriter s("delta");
+//	SysLogWriter s("delta");
 	w.show();
-	s.show();
+//	s.show();
 	
 	Logger<LogWriter>::setDefaultWriter(&w);
 // 	Logger<LogWriter>::setDefaultWriter(&s);
@@ -82,7 +83,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else {
-		MainSequence mainSequence(&sequencer, &controlSys, &safetySys);
+// 		MainSequence mainSequence(&sequencer, &controlSys, &safetySys);  // TODO standard program
+		MainSequenceFaulhaber mainSequence(&sequencer, &controlSys, &safetySys);
 		sequencer.start(&mainSequence);
 		
 		while(running && sequencer.getState() != state::terminated) {
@@ -91,6 +93,10 @@ int main(int argc, char* argv[]) {
 						<< controlSys.directKin.getOut().getSignal().getValue()[1] << "   "
 						<< controlSys.directKin.getOut().getSignal().getValue()[2] << "   "
 						<< controlSys.directKin.getOut().getSignal().getValue()[3];*/
+			
+// 			eeros::math::Vector4 out = controlSys.vel2posInputs.getPositionOut().getSignal().getValue();
+// 			log.info() << out(0) << "; " << out(1) << "; " << out(2) << "; " << out(3);
+			
 		}
 	}
 	
