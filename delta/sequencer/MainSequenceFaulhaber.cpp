@@ -37,36 +37,32 @@ void MainSequenceFaulhaber::run() {
 	}
 	
 	double time;
-	bool standing; bool sorted = false;
-	AxisVector enc, enc_prev, diff;
+	bool standing; bool sorted = false; bool mouse_standing; bool joyst_standing;
+	AxisVector enc, enc_prev, enc_diff;
 	
 	int index = controlSys->inputSwitch.getCurrentInput(); // mouse output
+	int dev_index = 0;                                     // device = mouse
+	
 	AxisVector speed; speed << 1, 1, 1, 5;
 	AxisVector acc; acc << 10, 10, 10, 50;
 	double speedup_factor = 1.0;
-	
+	int count_sort = 0;
 	
 	while (true) {
-		if (index == 1) {
-			log.trace() << "Press the blue button switch to predifined path";
-		} else if (index == 0 /*|| index == 2*/) {
-			log.trace() << "Press the blue button switch to mouse input";
-		} 
-		
 		usleep(200000);
 		controlSys->board.button_latch[0].reset();
 		
-		if(index == 1) { // MOUSE
-			// wait for button signal or timeout
+		if(index == 1) { // MOUSE or JOYSTICK
+			// wait for blue button signal or timeout
 			while(controlSys->board.button_latch[0].get() != true) {
 				usleep(100000);
 				
 				// define if standing
 				enc = controlSys->board.getPosOut().getSignal().getValue();
 				for(int i = 0; i < enc.size(); i++){
-					diff[i] = fabs(enc[i] - enc_prev[i]);
+					enc_diff[i] = fabs(enc[i] - enc_prev[i]);
 				}
-				if(diff[0] < 0.01 && diff[1] < 0.01 && diff[2] < 0.01 && diff[3] < 2.0) standing = true;
+				if(enc_diff[0] < 0.01 && enc_diff[1] < 0.01 && enc_diff[2] < 0.01 && enc_diff[3] < 2.0) standing = true;
 				else standing = false;
 				
 				if(standing ) time = time + 0.1;
@@ -77,7 +73,10 @@ void MainSequenceFaulhaber::run() {
 					time = 0.0;
 					break;
 				}
+				
+				// set prev variables
 				enc_prev = enc;
+				
 				yield();
 			}
 			// set index
@@ -88,11 +87,12 @@ void MainSequenceFaulhaber::run() {
 				speedup_factor = 1.0;
 		}
 		else {
+			// if finished with sorting, then go automatically to device mode (joystick or mouse) -> index = 1
 			index = 1;
 		}
 
 		if (index == 0) {
-			log.trace() << "sort";
+			// go to ready position
 			controlSys->pathPlanner.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue());
  			controlSys->pathPlanner.setMaxSpeed(speed * speedup_factor);
  			controlSys->pathPlanner.setMaxAcc(acc * speedup_factor);
@@ -102,15 +102,31 @@ void MainSequenceFaulhaber::run() {
 				usleep(100000);
 				yield();
 			}
-			sort();
+			
+			std::cout << "count: " << count_sort << std::endl;
+			
+			// check count sorting
+			if(count_sort == 4){
+				// initialize
+				safetySys->triggerEvent(doParking);
+				while(safetySys->getCurrentLevel().getId() != systemReady) {
+					usleep(100000);
+					yield();
+				}
+				count_sort = 0;
+			}
+			else{
+				// sort
+				sort();
+				count_sort++;
+			}
 		}
 		if (index == 1) {
 			log.trace() << "switching to mouse input";
 			controlSys->pathPlanner.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue());
-			controlSys->mouse.setInitPos(start_position); 
-			controlSys->joystick.setInitPos(start_position); 
-			controlSys->vel2posInputs.setInitPos(start_position);
-			
+// 			controlSys->mouse.setInitPos(start_position); 
+// 			controlSys->joystick.setInitPos(start_position); 
+ 			
 			controlSys->inputSwitch.switchToInput(0);
 			controlSys->pathPlanner.gotoPoint(start_position);
 			while(!controlSys->pathPlanner.posReached()) {
@@ -118,8 +134,8 @@ void MainSequenceFaulhaber::run() {
 				yield();
 			}
 			controlSys->mouse.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
-			controlSys->joystick.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
-			controlSys->vel2posInputs.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue());
+// 			controlSys->joystick.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
+ 			
 			controlSys->inputSwitch.switchToInput(1);
 		}
 	}

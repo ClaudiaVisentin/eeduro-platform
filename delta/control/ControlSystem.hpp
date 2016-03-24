@@ -21,6 +21,7 @@
 #include "MotorModel.hpp"
 #include "PathPlanner.hpp"
 #include "Velocity2Position.hpp"
+#include "SelectDevice.hpp"
 #include "constants.hpp"
 #include "types.hpp"
 
@@ -61,6 +62,7 @@ namespace eeduro {
 			eeros::control::XBoxInput							joystick;
 			eeros::control::MouseInput							mouse;
 
+			eeduro::SelectDevice 								devSelector;
 			// Version 2 with both inputs together
 			eeros::control::D<AxisVector>						derMouse;
 			eeros::control::D<AxisVector>						derJoystick;

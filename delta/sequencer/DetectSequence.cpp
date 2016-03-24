@@ -32,7 +32,7 @@ int DetectSequence::run(int position) {
 	waitUntilPointReached();
 	
 	controlSys->torqueLimitation.setLimit(-torqueLimitDown, torqueLimitDown);
-			
+	
 	p[2] = touch;
 	controlSys->pathPlanner.gotoPoint(p);
 	waitUntilPointReached();

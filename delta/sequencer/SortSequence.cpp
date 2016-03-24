@@ -180,9 +180,15 @@ void SortSequence::move(int position) {
 		p[0] = calibration.position[position].x + 0.0015; // FH: + 0.0015  
 		p[1] = calibration.position[position].y + 0.0015; // FH: + 0.0015
 	}
-	 
+	
+// 	std::cout << "gp: " << p(0) << "; " << p(1) << "; " << p(2) << "; " << p(3) << std::endl;
+	
 	controlSys->pathPlanner.gotoPoint(p);
 	waitUntilPointReached();
+	
+// 	auto k = controlSys->inputSwitch.getOut().getSignal().getValue();
+// 	std::cout << "pr: " << k(0) << "; " << k(1) << "; " << k(2) << "; " << k(3) << std::endl;
+	
 }
 
 void SortSequence::waitUntilPointReached() {

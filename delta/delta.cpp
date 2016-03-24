@@ -38,12 +38,11 @@ int main(int argc, char* argv[]) {
 	w.show();
 //	s.show();
 	
-	Logger<LogWriter>::setDefaultWriter(&w);
+	
 // 	Logger<LogWriter>::setDefaultWriter(&s);
 	
-	Logger<LogWriter> log('M');
 	
-	log.trace() << "Application eeduro-delta started...";
+	std::cout << "Application eeduro-delta started..." << std::endl;
 	
 	// create control system
 	ControlSystem controlSys;
@@ -69,6 +68,9 @@ int main(int argc, char* argv[]) {
 	DeltaSafetyProperties safetyProperties(&controlSys);
 	SafetySystem safetySys(safetyProperties, dt);
 	
+	Logger<LogWriter>::setDefaultWriter(&w);
+	Logger<LogWriter> log('M');
+
 	// create sequencer
 	Sequencer sequencer;
 	

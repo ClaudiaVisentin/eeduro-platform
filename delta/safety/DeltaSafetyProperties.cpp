@@ -85,7 +85,8 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	level(systemReady       ).addEvent(doAutoMoving,         autoMoving,         kPublicEvent);
 	level(systemReady       ).addEvent(doMouseTeaching,      autoMoving,         kPublicEvent);
 	level(systemReady       ).addEvent(doJoystickTeaching,   autoMoving,         kPublicEvent);
-	level(systemReady       ).addEvent(doParking,            parking,            kPublicEvent);
+// 	level(systemReady       ).addEvent(doParking,            parking,            kPublicEvent);
+	level(systemReady       ).addEvent(doParking,            powerOn,            kPublicEvent);
 	level(autoMoving        ).addEvent(stopMoving,           systemReady,        kPublicEvent);
 	level(mouseTeaching     ).addEvent(stopMoving,           systemReady,        kPublicEvent);
 	level(joystickTeaching  ).addEvent(stopMoving,           systemReady,        kPublicEvent);
@@ -222,17 +223,11 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 				// TODO reset output
 				controlSys->voltageSwitch.switchToInput(0);
 				count = 0;
-				first = false;
+				first = true;
 				privateContext->triggerEvent(doSystemReady);
-				
 			}
 		}
 	});
-	
-// 	level(systemReady).setLevelAction([&](SafetyContext* privateContext) {
-// 		std::cout << "limit: " << controlSys->mouse.getOut().getSignal().getValue() << std::endl;
-// 		std::cout << "output: " << controlSys->joystick.getOut().getSignal().getValue() << std::endl;
-// 	});
 	
 	// Define entry level
 	entryLevel = off;

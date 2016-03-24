@@ -41,18 +41,25 @@ ControlSystem::ControlSystem() :
 	
 	board.getIn().connect(voltageSwitch.getOut());
 	
-// 	// Version 1
-// 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
-// 	inputSwitch.getIn(1).connect(mouse.getOut());     
+	// Version 1
+	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
+	inputSwitch.getIn(1).connect(mouse.getOut());     
 // 	inputSwitch.getIn(2).connect(joystick.getOut());
 	
-	// Version 2
+// 	// Version 2
+// 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
+// 	derMouse.getIn().connect(mouse.getOut());
+// 	derJoystick.getIn().connect(joystick.getOut());
+// 	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
+// 	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
+// 	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
+	
+/*	// Version 3
+	devSelector.getJoystickIn().connect(joystick.getOut());
+	devSelector.getMouseIn().connect(mouse.getOut());
+	
 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
-	derMouse.getIn().connect(mouse.getOut());
-	derJoystick.getIn().connect(joystick.getOut());
-	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
-	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
-	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
+	inputSwitch.getIn(1).connect(devSelector.getOut());    */ 
 	
 	posSum.getIn(0).connect(inputSwitch.getOut());
 	posSum.getIn(1).connect(directKin.getOut());
@@ -83,9 +90,13 @@ ControlSystem::ControlSystem() :
 	
 	timedomain.addBlock(&joystick);
 	timedomain.addBlock(&mouse);
-	timedomain.addBlock(&derJoystick);
-	timedomain.addBlock(&derMouse);
-	timedomain.addBlock(&vel2posInputs); 
+	
+	timedomain.addBlock(&devSelector);
+	
+// 	timedomain.addBlock(&derJoystick);
+// 	timedomain.addBlock(&derMouse);
+// 	timedomain.addBlock(&vel2posInputs); 
+	
 	timedomain.addBlock(&pathPlanner);
 	timedomain.addBlock(&inputSwitch);
 	timedomain.addBlock(&board);
