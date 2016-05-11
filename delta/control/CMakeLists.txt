@@ -1,1 +1,3 @@
-add_delta_sources(Kinematic.cpp Jacobian.cpp DirectKinematic.cpp Jacobi.cpp ControlSystem.cpp MotorModel.cpp PathPlanner.cpp Inertia.cpp Velocity2Position.cpp)
+add_delta_sources (ControlSystem_client.cpp ControlSystem_server.cpp ServerData.cpp ClientData.cpp Kinematic.cpp Jacobian.cpp DirectKinematic.cpp Jacobi.cpp ControlSystem.cpp MotorModel.cpp PathPlanner.cpp Inertia.cpp Velocity2Position.cpp)
+add_client_sources(ControlSystem_client.cpp ControlSystem_server.cpp ServerData.cpp ClientData.cpp Kinematic.cpp Jacobian.cpp DirectKinematic.cpp Jacobi.cpp ControlSystem.cpp MotorModel.cpp PathPlanner.cpp Inertia.cpp Velocity2Position.cpp)
+add_server_sources(ControlSystem_client.cpp ControlSystem_server.cpp ServerData.cpp ClientData.cpp Kinematic.cpp Jacobian.cpp DirectKinematic.cpp Jacobi.cpp ControlSystem.cpp MotorModel.cpp PathPlanner.cpp Inertia.cpp Velocity2Position.cpp)
