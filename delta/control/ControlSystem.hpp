@@ -62,7 +62,6 @@ namespace eeduro {
 			eeros::control::XBoxInput							joystick;
 			eeros::control::MouseInput							mouse;
 
-			eeduro::SelectDevice 								devSelector;
 			// Version 2 with both inputs together
 			eeros::control::D<AxisVector>						derMouse;
 			eeros::control::D<AxisVector>						derJoystick;

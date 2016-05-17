@@ -32,6 +32,13 @@ void MainSequenceFaulhaber::run() {
 	log.trace() << "Sequencer '" << name << "': started.";
 	yield();
 	log.trace() << "Sequencer '" << name << "': waiting until robot is ready...";
+	
+	// Automatic init
+	while(safetySys->getCurrentLevel().getId() != systemOn) {
+		yield();
+	}
+	safetySys->triggerEvent(doPoweringUp);
+	// Wait initialization complete
 	while(safetySys->getCurrentLevel().getId() != systemReady) {
 		yield();
 	}
@@ -41,7 +48,6 @@ void MainSequenceFaulhaber::run() {
 	AxisVector enc, enc_prev, enc_diff;
 	
 	int index = controlSys->inputSwitch.getCurrentInput(); // mouse output
-	int dev_index = 0;                                     // device = mouse
 	
 	AxisVector speed; speed << 1, 1, 1, 5;
 	AxisVector acc; acc << 10, 10, 10, 50;
@@ -69,7 +75,7 @@ void MainSequenceFaulhaber::run() {
 				else time = 0.0;
 				
 				// define if timed out
-				if(time > 3.0) {
+				if(time > 5.0 /*3.0*/) {
 					time = 0.0;
 					break;
 				}
@@ -123,9 +129,11 @@ void MainSequenceFaulhaber::run() {
 		}
 		if (index == 1) {
 			log.trace() << "switching to mouse input";
+			controlSys->mouse.setInitPos(start_position); 
+			controlSys->joystick.setInitPos(start_position); 
+			controlSys->vel2posInputs.setInitPos(start_position); 
+
 			controlSys->pathPlanner.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue());
-// 			controlSys->mouse.setInitPos(start_position); 
-// 			controlSys->joystick.setInitPos(start_position); 
  			
 			controlSys->inputSwitch.switchToInput(0);
 			controlSys->pathPlanner.gotoPoint(start_position);
@@ -134,12 +142,14 @@ void MainSequenceFaulhaber::run() {
 				yield();
 			}
 			controlSys->mouse.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
-// 			controlSys->joystick.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
- 			
+			
+			// TODO only Marketing & Robotic Robot
+			controlSys->joystick.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
+ 			controlSys->vel2posInputs.setInitPos(controlSys->inputSwitch.getOut().getSignal().getValue()); 
+
 			controlSys->inputSwitch.switchToInput(1);
 		}
 	}
-	
 	log.trace() << "Sequencer '" << name << "': finished.";
 }
 

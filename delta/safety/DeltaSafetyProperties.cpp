@@ -30,8 +30,8 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	criticalOutputs = { power, enable0, enable1, enable2, enable3, led };
 	
 	// ############ Define criticcal inputs ############
-	emergencyStop = hal.getLogicPeripheralInput("emergency");
-	approval = hal.getLogicPeripheralInput("approval");
+	emergencyStop = hal.getLogicPeripheralInput("emergency");  // red button
+	approval = hal.getLogicPeripheralInput("approval");        // green button
 	q0 = hal.getRealPeripheralInput("q0");
 	q1 = hal.getRealPeripheralInput("q1");
 	q2 = hal.getRealPeripheralInput("q2");
@@ -87,6 +87,7 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	level(systemReady       ).addEvent(doJoystickTeaching,   autoMoving,         kPublicEvent);
 // 	level(systemReady       ).addEvent(doParking,            parking,            kPublicEvent);
 	level(systemReady       ).addEvent(doParking,            powerOn,            kPublicEvent);
+	
 	level(autoMoving        ).addEvent(stopMoving,           systemReady,        kPublicEvent);
 	level(mouseTeaching     ).addEvent(stopMoving,           systemReady,        kPublicEvent);
 	level(joystickTeaching  ).addEvent(stopMoving,           systemReady,        kPublicEvent);
@@ -111,6 +112,7 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	level(parking           ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          range(q0, q012SafeMin, q012SafeMax, doEmergency), range(q1, q012SafeMin, q012SafeMax, doEmergency), range(q2, q012SafeMin, q012SafeMax, doEmergency), range(q3, q3SafeMin, q3SafeMax, doEmergency)     });
 	level(parked            ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          ignore(q0),                                       ignore(q1),                                       ignore(q2),                                       ignore(q3)                                       });
 	level(systemReady       ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          range(q0, q012SafeMin, q012SafeMax, doEmergency), range(q1, q012SafeMin, q012SafeMax, doEmergency), range(q2, q012SafeMin, q012SafeMax, doEmergency), range(q3, q3SafeMin, q3SafeMax, doEmergency)     });
+	
 	level(autoMoving        ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          range(q0, q012SafeMin, q012SafeMax, doEmergency), range(q1, q012SafeMin, q012SafeMax, doEmergency), range(q2, q012SafeMin, q012SafeMax, doEmergency), range(q3, q3SafeMin, q3SafeMax, doEmergency)     });
 	level(mouseTeaching     ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          range(q0, q012SafeMin, q012SafeMax, doEmergency), range(q1, q012SafeMin, q012SafeMax, doEmergency), range(q2, q012SafeMin, q012SafeMax, doEmergency), range(q3, q3SafeMin, q3SafeMax, doEmergency)     });
 	level(joystickTeaching  ).setInputActions({ check(emergencyStop, false, doEmergency), ignore(approval),                          range(q0, q012SafeMin, q012SafeMax, doEmergency), range(q1, q012SafeMin, q012SafeMax, doEmergency), range(q2, q012SafeMin, q012SafeMax, doEmergency), range(q3, q3SafeMin, q3SafeMax, doEmergency)     });
@@ -133,6 +135,7 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 	level(parking           ).setOutputActions({ set(enable0, true ), set(enable1, true ), set(enable2, true ), set(enable3, true ), set(led, false) });
 	level(parked            ).setOutputActions({ set(enable0, false), set(enable1, false), set(enable2, false), set(enable3, false), set(led, false) });
 	level(systemReady       ).setOutputActions({ set(enable0, true ), set(enable1, true ), set(enable2, true ), set(enable3, true ), set(led, false) });
+	
 	level(autoMoving        ).setOutputActions({ set(enable0, true ), set(enable1, true ), set(enable2, true ), set(enable3, true ), set(led, false) });
 	level(mouseTeaching     ).setOutputActions({ set(enable0, true ), set(enable1, true ), set(enable2, true ), set(enable3, true ), set(led, false) });
 	level(joystickTeaching  ).setOutputActions({ set(enable0, true ), set(enable1, true ), set(enable2, true ), set(enable3, true ), set(led, false) });
@@ -227,6 +230,19 @@ DeltaSafetyProperties::DeltaSafetyProperties(ControlSystem* cs) : controlSys(cs)
 				privateContext->triggerEvent(doSystemReady);
 			}
 		}
+	});
+	
+	level(systemReady).setLevelAction([&](SafetyContext* privateContext) {
+		static int count = 0;
+
+		if(count > 500) {
+			auto ref = controlSys->posController.getOut().getSignal().getValue();
+			auto enc = controlSys->posDiff.getOut().getSignal().getValue();
+			std::cout << ref << "; " << enc << std::endl;
+			count = 0;
+		}
+		else
+			count++;
 	});
 	
 	// Define entry level

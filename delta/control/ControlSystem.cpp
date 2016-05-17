@@ -3,7 +3,6 @@
 
 #include <eeros/core/EEROSException.hpp>
 #include <unistd.h>
-
 #include <iostream>
 
 using namespace eeduro::delta;
@@ -21,7 +20,7 @@ ControlSystem::ControlSystem() :
 	
 	joystick("/dev/input/js0"),
 	mouse("/dev/input/event1"),
-	pathPlanner({1, 1, 1, 5}, {10, 10, 10, 50}, dt), // TODO
+	pathPlanner({1, 1, 1, 5}, {10, 10, 10, 50}, dt), 
 	inputSwitch(1),
 	posController(kp),
 	speedController(kd),
@@ -41,25 +40,17 @@ ControlSystem::ControlSystem() :
 	
 	board.getIn().connect(voltageSwitch.getOut());
 	
-	// Version 1
-	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
-	inputSwitch.getIn(1).connect(mouse.getOut());     
-// 	inputSwitch.getIn(2).connect(joystick.getOut());
+	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());	
 	
-// 	// Version 2
-// 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
-// 	derMouse.getIn().connect(mouse.getOut());
-// 	derJoystick.getIn().connect(joystick.getOut());
-// 	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
-// 	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
-// 	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
+	// Version 1 (Faulhaber)
+// 	inputSwitch.getIn(1).connect(mouse.getOut());     
 	
-/*	// Version 3
-	devSelector.getJoystickIn().connect(joystick.getOut());
-	devSelector.getMouseIn().connect(mouse.getOut());
-	
-	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());
-	inputSwitch.getIn(1).connect(devSelector.getOut());    */ 
+	// Version 2 (Marketing)
+	derMouse.getIn().connect(mouse.getOut());
+	derJoystick.getIn().connect(joystick.getOut());
+	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
+	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
+	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
 	
 	posSum.getIn(0).connect(inputSwitch.getOut());
 	posSum.getIn(1).connect(directKin.getOut());
@@ -91,11 +82,9 @@ ControlSystem::ControlSystem() :
 	timedomain.addBlock(&joystick);
 	timedomain.addBlock(&mouse);
 	
-	timedomain.addBlock(&devSelector);
-	
-// 	timedomain.addBlock(&derJoystick);
-// 	timedomain.addBlock(&derMouse);
-// 	timedomain.addBlock(&vel2posInputs); 
+	timedomain.addBlock(&derJoystick);
+	timedomain.addBlock(&derMouse);
+	timedomain.addBlock(&vel2posInputs); 
 	
 	timedomain.addBlock(&pathPlanner);
 	timedomain.addBlock(&inputSwitch);
