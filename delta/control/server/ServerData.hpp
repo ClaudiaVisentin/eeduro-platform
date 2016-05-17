@@ -1,22 +1,22 @@
-#ifndef CH_NTB_EEDURO_DELTA_CLIENTDATA_HPP_
-#define CH_NTB_EEDURO_DELTA_CLIENTDATA_HPP_
+#ifndef CH_NTB_EEDURO_DELTA_SERVERDATA_HPP_
+#define CH_NTB_EEDURO_DELTA_SERVERDATA_HPP_
 
 #include <eeros/control/Block.hpp>
 #include <eeros/control/Input.hpp>
 #include <eeros/control/Output.hpp>
 #include <array>
 #include <atomic>
-#include "types.hpp"
-#include "constants.hpp"
-#include "../socket/Client.hpp"
+#include "../types.hpp"
+#include "../constants.hpp"
+#include "../../socket/Server.hpp"
 
 namespace eeduro {
 	namespace delta {
 	
-		class ClientData: public eeros::control::Block {
+		class ServerData: public eeros::control::Block {
 			
 		public:
-			ClientData(Client* clientThread);
+			ServerData(Server* serverThread);
 			
 			virtual eeros::control::Input<AxisVector>& getIn();
 			virtual eeros::control::Output<AxisVector>& getOut();
@@ -26,9 +26,9 @@ namespace eeduro {
 		protected:
 			eeros::control::Input<AxisVector> in;
 			eeros::control::Output<AxisVector> out;
-			Client* client;
+			Server* server;
 		};
 	};
 }
 
-#endif /* CH_NTB_EEDURO_DELTA_CLIENTDATA_HPP_ */
+#endif /* CH_NTB_EEDURO_DELTA_SERVERDATA_HPP_ */

@@ -28,8 +28,8 @@ void ClientData::run() {
 	
 	// Send data to other robot
 	for(int i=0;i<nofAxis;i++){
-		sendData[i] = 4.0;
-// 		sendData[i] = in.getSignal().getValue()(i);
+// 		sendData[i] = 4.0;
+		sendData[i] = in.getSignal().getValue()(i);
 	}
 	client->sendBuffer(sendData);
 	

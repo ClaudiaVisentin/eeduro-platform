@@ -1,6 +1,6 @@
-#include "MainSequenceFaulhaber.hpp"
-#include "../safety/DeltaSafetyProperties.hpp"
-#include "../control/types.hpp"
+#include "MainSequenceFaulhaber_client.hpp"
+#include "../../safety/client/DeltaSafetyProperties_client.hpp"
+#include "../../control/types.hpp"
 #include <unistd.h>
 #include <iostream>
 
@@ -16,7 +16,7 @@ enum {
 	move_to
 };
 
-MainSequenceFaulhaber::MainSequenceFaulhaber(Sequencer* sequencer, ControlSystem* controlSys, SafetySystem* safetySys) :
+MainSequenceFaulhaber_client::MainSequenceFaulhaber_client(Sequencer* sequencer, ControlSystem_client* controlSys, SafetySystem* safetySys) :
 	Sequence<void>("main", sequencer),
 	moveBlock(sequencer, controlSys, safetySys),
 	sort(sequencer, controlSys, safetySys),
@@ -25,7 +25,7 @@ MainSequenceFaulhaber::MainSequenceFaulhaber(Sequencer* sequencer, ControlSystem
 	// nothing to do
 }
 
-void MainSequenceFaulhaber::run() {
+void MainSequenceFaulhaber_client::run() {
 	const AxisVector start_position{ 0, 0, -0.015, 0 };
 	controlSys->pathPlanner.setInitPos(start_position);
 	

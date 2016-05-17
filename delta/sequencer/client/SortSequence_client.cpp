@@ -1,5 +1,5 @@
-#include "SortSequence.hpp"
-#include "../safety/DeltaSafetyProperties.hpp"
+#include "SortSequence_client.hpp"
+#include "../../safety/client/DeltaSafetyProperties_client.hpp"
 #include <unistd.h>
 #include <iostream>
 
@@ -8,7 +8,7 @@ using namespace eeros::sequencer;
 using namespace eeros::safety;
 
 
-SortSequence::SortSequence(Sequencer* sequencer, ControlSystem* controlSys, SafetySystem* safetySys) :
+SortSequence_client::SortSequence_client(Sequencer* sequencer, ControlSystem_client* controlSys, SafetySystem* safetySys) :
 	Sequence<void>("sort", sequencer),
 	moveBlock(sequencer, controlSys, safetySys),
 	detect(sequencer, controlSys),
@@ -21,7 +21,7 @@ SortSequence::SortSequence(Sequencer* sequencer, ControlSystem* controlSys, Safe
 	}
 }
 
-void SortSequence::run() {
+void SortSequence_client::run() {
 	std::array<int,4> blocks;
 	
 	// detect positions of all blocks
@@ -80,7 +80,7 @@ void SortSequence::run() {
 		sortBlocks(blocks);
 }
 
-void SortSequence::sortBlocks(std::array<int,4> blocks) {
+void SortSequence_client::sortBlocks(std::array<int,4> blocks) {
 	while (true) {
 		// find wrong block
 		int wrong_block = (-1);
@@ -129,7 +129,7 @@ void SortSequence::sortBlocks(std::array<int,4> blocks) {
 	log.info() << "finished sorting";
 }
 
-void SortSequence::unsortBlocks() {
+void SortSequence_client::unsortBlocks() {
 	int randIndex = rand() % 3;
 	if(randIndex == 0) {
 		moveBlock(3, 0);
@@ -146,7 +146,7 @@ void SortSequence::unsortBlocks() {
 	}
 }
 
-int SortSequence::find(const std::array<int,4> &blocks, int block) {
+int SortSequence_client::find(const std::array<int,4> &blocks, int block) {
 	for (int i = 0; i < blocks.size(); i++) {
 		if (blocks[i] == block)
 			return i;
@@ -155,7 +155,7 @@ int SortSequence::find(const std::array<int,4> &blocks, int block) {
 }
 
 
-void SortSequence::move(int position) {
+void SortSequence_client::move(int position) {
 	auto p = controlSys->pathPlanner.getLastPoint();
 // 	p[0] = calibration.position[position].x;
 // 	p[1] = calibration.position[position].y;
@@ -185,7 +185,7 @@ void SortSequence::move(int position) {
 	waitUntilPointReached();
 }
 
-void SortSequence::waitUntilPointReached() {
+void SortSequence_client::waitUntilPointReached() {
 	while (!controlSys->pathPlanner.posReached()) {
 		usleep(100000);
 		yield();

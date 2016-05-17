@@ -27,8 +27,8 @@ void ServerData::run() {
 	
 	// Send data to other robot
 	for(int i=0;i<nofAxis;i++){
-		sendData[i] = 5.0;
-// 		sendData[i] = in.getSignal().getValue()(i);
+// 		sendData[i] = 5.0;
+		sendData[i] = in.getSignal().getValue()(i);
 	}
 	server->sendBuffer(sendData);
 	

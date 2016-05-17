@@ -1,15 +1,18 @@
-#include "ControlSystem.hpp"
-#include "../safety/DeltaSafetyProperties.hpp"
+#include "ControlSystem_client.hpp"
+#include "../../safety/DeltaSafetyProperties.hpp"
 
 #include <eeros/core/EEROSException.hpp>
 #include <unistd.h>
+
 #include <iostream>
 
 using namespace eeduro::delta;
 using namespace eeros;
 using namespace eeros::control;
 
-ControlSystem::ControlSystem() :
+ControlSystem_client::ControlSystem_client(Client* clientThread) :
+	clientData(clientThread),
+	
 	i(i1524, i1524, i1524, i0816),
 	kM(kM1524, kM1524, kM1524, kM0816),
 	RA(RA1524, RA1524, RA1524, RA0816),
@@ -30,7 +33,9 @@ ControlSystem::ControlSystem() :
 	voltageSwitch(1),
 	directKin(kinematic),
 	timedomain("Main time domain", dt, true) {
-
+		
+	clientData.getIn().connect(board.getPosOut());
+	
 	torqueLimitation.enable();
 	torqueGear.setGain(1.0 / i);
 	angleGear.setGain(1.0 / i);
@@ -80,6 +85,8 @@ ControlSystem::ControlSystem() :
 	voltageSwitch.getIn(1).connect(voltageSetPoint.getOut());
 	directKin.getIn().connect(angleGear.getOut());
 	
+	timedomain.addBlock(&clientData);
+	
 	timedomain.addBlock(&joystick);
 	timedomain.addBlock(&mouse);
 	timedomain.addBlock(&derJoystick);
@@ -108,30 +115,30 @@ ControlSystem::ControlSystem() :
 	
 }
 
-void ControlSystem::start() {
+void ControlSystem_client::start() {
 	timedomain.start();
 }
 
-void ControlSystem::stop() {
+void ControlSystem_client::stop() {
 	timedomain.stop();
 	timedomain.join();
 }
 
-void ControlSystem::enableAxis() {
+void ControlSystem_client::enableAxis() {
 	board.setEnable(true);
 	board.setReset(false);
 }
 
-void ControlSystem::disableAxis() {
+void ControlSystem_client::disableAxis() {
 	board.setEnable(false);
 	board.setReset(true);
 }
 
-void ControlSystem::setVoltageForInitializing(AxisVector u) {
+void ControlSystem_client::setVoltageForInitializing(AxisVector u) {
 	voltageSetPoint.setValue(u);
 }
 
-bool ControlSystem::switchToPosControl() {
+bool ControlSystem_client::switchToPosControl() {
 	if(homed || !allAxisStopped()) return false;
 	board.resetPositions(q012homingOffset, q012homingOffset, q012homingOffset, q3homingOffset);	
 	setVoltageForInitializing({0, 0, 0, 0});
@@ -140,32 +147,32 @@ bool ControlSystem::switchToPosControl() {
 }
 
 
-void ControlSystem::goToPos(double x, double y, double z, double phi) {
+void ControlSystem_client::goToPos(double x, double y, double z, double phi) {
 	AxisVector p;
 	p << x, y, z, phi;
 	pathPlanner.gotoPoint(p);
 }
 
-void ControlSystem::initBoard() {
+void ControlSystem_client::initBoard() {
 	if(!board.open("/dev/spidev1.0"))
 		throw EEROSException("failed to open SPI device");
 }
 
-AxisVector ControlSystem::getTcpPos() {
+AxisVector ControlSystem_client::getTcpPos() {
 	return directKin.getOut().getSignal().getValue();
 }
 
-AxisVector ControlSystem::getAxisPos() {
+AxisVector ControlSystem_client::getAxisPos() {
 	return angleGear.getOut().getSignal().getValue();
 }
 
-bool ControlSystem::allAxisStopped(double maxSpeed) {
+bool ControlSystem_client::allAxisStopped(double maxSpeed) {
 	for(int i = 0; i < nofAxis; i++) {
 		if(board.getSpeedOut().getSignal().getValue()[i] > maxSpeed) return false;
 	}
 	return true;
 }
 
-bool ControlSystem::axisHomed() {
+bool ControlSystem_client::axisHomed() {
 	return homed;
 }
