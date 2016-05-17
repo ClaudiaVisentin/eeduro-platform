@@ -4,6 +4,7 @@
 #include "sequencer/MainSequence.hpp"
 #include "sequencer/MainSequenceFaulhaber.hpp"
 #include "sequencer/CalibrateSequence.hpp"
+#include "socket/Client.hpp"
 
 #include <eeros/hal/HAL.hpp>
 #include <eeros/safety/SafetySystem.hpp>

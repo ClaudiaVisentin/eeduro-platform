@@ -17,3 +17,10 @@ target_link_libraries(magnet eeduro)
 
 add_executable(voltage voltage.cpp)
 target_link_libraries(voltage eeduro eeros)
+
+
+add_executable(client testClient.cpp)
+target_link_libraries(client eeduro eeros)
+
+add_executable(server testServer.cpp)
+target_link_libraries(server eeduro eeros)
