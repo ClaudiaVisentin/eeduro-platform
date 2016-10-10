@@ -170,7 +170,7 @@ void SortSequence::move(int position) {
 	}                                                      
 	else if(position == 2) {                               
 		p[0] = calibration.position[position].x; // + 0.0015;  
-		p[1] = calibration.position[position].y - 0.0015;  
+		p[1] = calibration.position[position].y; // - 0.0015;  
 	}                                                      
 	else if(position == 3) {                               
 		p[0] = calibration.position[position].x; // + 0.0015;  

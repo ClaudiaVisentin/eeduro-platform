@@ -34,15 +34,15 @@ void MainSequenceFaulhaber::run() {
 	log.trace() << "Sequencer '" << name << "': waiting until robot is ready...";
 	
 	// Automatic init
-	while(safetySys->getCurrentLevel().getId() != systemOn) {
+	while(safetySys->getCurrentLevel().getId() < systemOn) {
 		yield();
 	}
 	safetySys->triggerEvent(doPoweringUp);
 	// Wait initialization complete
-	while(safetySys->getCurrentLevel().getId() != systemReady) {
+	while(safetySys->getCurrentLevel().getId() < systemReady) {
 		yield();
 	}
-
+	
 	double time;
 	bool standing; bool sorted = false; bool mouse_standing; bool joyst_standing;
 	AxisVector enc, enc_prev, enc_diff;

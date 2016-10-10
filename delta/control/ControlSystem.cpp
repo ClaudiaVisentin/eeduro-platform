@@ -43,14 +43,14 @@ ControlSystem::ControlSystem() :
 	inputSwitch.getIn(0).connect(pathPlanner.getPosOut());	
 	
 	// Version 1 (Faulhaber)
-// 	inputSwitch.getIn(1).connect(mouse.getOut());     
+	inputSwitch.getIn(1).connect(mouse.getOut());     
 	
-	// Version 2 (Marketing)
-	derMouse.getIn().connect(mouse.getOut());
-	derJoystick.getIn().connect(joystick.getOut());
-	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
-	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
-	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
+// 	// Version 2 (Marketing)
+// 	derMouse.getIn().connect(mouse.getOut());
+// 	derJoystick.getIn().connect(joystick.getOut());
+// 	vel2posInputs.getMouseIn().connect(derMouse.getOut());        
+// 	vel2posInputs.getJoystickIn().connect(derJoystick.getOut());  
+// 	inputSwitch.getIn(1).connect(vel2posInputs.getPositionOut()); 
 	
 	posSum.getIn(0).connect(inputSwitch.getOut());
 	posSum.getIn(1).connect(directKin.getOut());

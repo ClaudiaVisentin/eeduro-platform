@@ -21,7 +21,6 @@
 #include "MotorModel.hpp"
 #include "PathPlanner.hpp"
 #include "Velocity2Position.hpp"
-#include "SelectDevice.hpp"
 #include "constants.hpp"
 #include "types.hpp"
 

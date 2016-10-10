@@ -16,6 +16,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>
+#include <math.h>
 
 using namespace eeduro;
 using namespace eeduro::delta;
@@ -75,8 +76,13 @@ int main(int argc, char* argv[]) {
 	// create sequencer
 	Sequencer sequencer;
 	
+	while(safetySys.getCurrentLevel().getId() != systemReady) {
+		usleep(100000);
+	}
+	
 	if (argc >= 2) {
 		if (std::string("calibrate") == argv[1]) {
+			std::cout << "here" << std::endl;
 			CalibrateSequence calibrate(&sequencer, &controlSys, &safetySys);
 			sequencer.start(&calibrate);
 			sequencer.join();
@@ -86,8 +92,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else {
-// 		MainSequence mainSequence(&sequencer, &controlSys, &safetySys);  // TODO standard program
-		MainSequenceFaulhaber mainSequence(&sequencer, &controlSys, &safetySys);
+		MainSequence mainSequence(&sequencer, &controlSys, &safetySys);  // TODO standard program
+// 		MainSequenceFaulhaber mainSequence(&sequencer, &controlSys, &safetySys);
 		sequencer.start(&mainSequence);
 		
 		while(running && sequencer.getState() != state::terminated) {

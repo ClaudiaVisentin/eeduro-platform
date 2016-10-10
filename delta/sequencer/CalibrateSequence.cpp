@@ -2,6 +2,7 @@
 #include "../safety/DeltaSafetyProperties.hpp"
 #include <eeros/core/EEROSException.hpp>
 #include <unistd.h>
+#include <iostream>
 
 using namespace eeduro::delta;
 using namespace eeros::sequencer;
@@ -46,6 +47,7 @@ void CalibrateSequence::waitForBlueButton()		 { waitForButton({0}); }
 void CalibrateSequence::waitForBlueOrRedButton() { waitForButton({ 0, 1 }); }
 
 void CalibrateSequence::run() {
+	std::cout << "starting calibrate sequnce" << std::endl;
 	waitUntilReady();
 	
 	usleep(500000);
